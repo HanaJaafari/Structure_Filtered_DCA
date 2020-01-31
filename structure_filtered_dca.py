@@ -52,10 +52,13 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 
 	sorted_aligned_residues = sorted(aligned_residues, key=lambda x: x[1], reverse=True) #HJ: This orders the list based on the number of aligned residues
 
-#	print(sorted_aligned_residues)
-
+	print(sorted_aligned_residues)
+	i=0
 	for sequence, num_aligned_residues, structure_id in sorted_aligned_residues:
-
+		
+		
+		print(sequence,num_aligned_residues,structure_id)
+		
 		sequence_start = int(sequence.split('/')[1].split('-')[0]) #HJ: "sequence_start" and "sequence_end" refer to the range of the original sequence that is aligned to the MSA.
 
 		sequence_end = int(sequence.split('/')[1].split('-')[1])
@@ -76,6 +79,21 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 
 		num_residues = len([residue for residue in structure.get_residues() if not structure_filtered_dca_is_hetero(residue)]); print(sequence_end-sequence_start+1); print(num_residues)
 
+		print(num_residues,sequence_end-sequence_start+1)
+		
+		if i==0:
+			most_aligned_sequence = sequence
+			most_aligned_residues=num_residues
+			most_aligned_structure = aligned_structure
+		elif num_residues > sequence_end-sequence_start+1:
+			continue
+			print ('Number of residues larger than sequence length')
+			raise TypeError
+		elif num_residues>most_aligned_residues:
+			most_aligned_sequence = sequence
+			most_aligned_residues=num_residues
+			most_aligned_structure = aligned_structure
+		
 		if num_residues == sequence_end-sequence_start+1: #HJ: if the number of residues in the truncated pdb structure is greater than the number of aligned sequenes.
 
 			most_aligned_sequence = sequence
@@ -83,6 +101,7 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 			most_aligned_structure = aligned_structure
 
 			break
+		i+=1
 
 
 
