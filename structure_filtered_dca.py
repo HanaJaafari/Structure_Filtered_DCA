@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from Bio.PDB import PDBParser
 from Bio.PDB.PDBIO import Select
+from Bio.PDB import Selection
 
 
 def structure_filtered_dca_find_sequence_identifiers_for_structures(pfam_id, structure_strings, pfam_msa_directory=os.path.join(".", "pfam_msas")):
@@ -65,7 +66,7 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 
 		chain_id = aligned_structure.split()[1]
 
-		start, end = start_and_end_dict[aligned_structure] #HJ: "start" and "end" refer to the resolved pdb structure of the aligned sequence. d
+		start, end = start_and_end_dict[aligned_structure] #HJ: "start" and "end" refer to the resolved pdb structure of the aligned sequence.
 
 		structure_filtered_dca_download_pdb(pdb_id, pdb_directory=pdb_directory)
 
@@ -166,13 +167,13 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
 #
 #	# download pdb
 #
-#	structure_filtered_dca_download_pdb(pdb_id, pdb_directory=pdb_directory)
+	structure_filtered_dca_download_pdb(pdb_id, pdb_directory=pdb_directory)
 #
 #
 #
 #	# truncate pdb
 #
-#	structure_filtered_dca_truncate_pdb(pdb_id, chain_id, start, end)
+	structure_filtered_dca_truncate_pdb(pdb_id, chain_id, int(start), int(end))
 #
 #
 #
@@ -741,7 +742,7 @@ def structure_filtered_dca_download_pdb(pdb_id, pdb_directory=os.path.join(".", 
 
 		pdbl.retrieve_pdb_file(pdb_id, pdir=pdb_directory, obsolete=False, file_format="pdb")
 
-		os.rename(os.path.join(pdb_directory, 'pdb'+pdb_id+'.ent'), os.path.join(pdb_directory, pdb_id+'.pdb'))
+		os.rename(os.path.join(pdb_directory, 'pdb'+pdb_id.lower()+'.ent'), os.path.join(pdb_directory, pdb_id+'.pdb'))
 
 
 
@@ -1058,5 +1059,3 @@ class structure_filtered_dca_pfam_is_in_structure_selection(Select):
 			accept = False
 
 		return accept
-    
-structure_filtered_dca_from_pdb_and_pfam_family("PF05400")
