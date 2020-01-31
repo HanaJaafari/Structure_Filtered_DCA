@@ -51,7 +51,7 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 
 	sorted_aligned_residues = sorted(aligned_residues, key=lambda x: x[1], reverse=True) #HJ: This orders the list based on the number of aligned residues
 
-	print(sorted_aligned_residues)
+#	print(sorted_aligned_residues)
 
 	for sequence, num_aligned_residues, structure_id in sorted_aligned_residues:
 
@@ -70,30 +70,30 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 		structure_filtered_dca_download_pdb(pdb_id, pdb_directory=pdb_directory)
 
 		structure_filtered_dca_truncate_pdb(pdb_id, chain_id, start, end)
-#
-#		structure = structure_filtered_dca_parse_pdb(pdb_id+chain_id+'_'+str(start)+'-'+str(end))
-#
-#		num_residues = len([residue for residue in structure.get_residues() if not structure_filtered_dca_is_hetero(residue)])
-#
-#		if num_residues == sequence_end-sequence_start+1:
-#
-#			most_aligned_sequence = sequence
-#
-#			most_aligned_structure = aligned_structure
-#
-#			break
-#
-#
-#
-#	pdb_id = most_aligned_structure.split()[0]
-#
-#	chain_id = most_aligned_structure.split()[1]
-#
-#	start, end = start_and_end_dict[most_aligned_structure]
-#
-#
-#
-#	return most_aligned_sequence, most_aligned_structure, pdb_id, chain_id, start, end
+
+		structure = structure_filtered_dca_parse_pdb(pdb_id+chain_id+'_'+str(start)+'-'+str(end)) #HJ: This generates a pdb of the aligned sequence by truncating the pdb file based on sequence's identified chain.
+
+		num_residues = len([residue for residue in structure.get_residues() if not structure_filtered_dca_is_hetero(residue)]); print(sequence_end-sequence_start+1); print(num_residues)
+
+		if num_residues == sequence_end-sequence_start+1: #HJ: if the number of residues in the truncated pdb structure is greater than the number of aligned sequenes.
+
+			most_aligned_sequence = sequence
+
+			most_aligned_structure = aligned_structure
+
+			break
+
+
+
+	pdb_id = most_aligned_structure.split()[0]
+
+	chain_id = most_aligned_structure.split()[1]
+
+	start, end = start_and_end_dict[most_aligned_structure]
+
+
+
+	return most_aligned_sequence, most_aligned_structure, pdb_id, chain_id, start, end
 
 
 #HJ: for this code, we provide the associated protein family (via "pfam_id"). I have modified "pfam_msa_directory" in this function's arguments.
@@ -114,8 +114,8 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
 
 	# parse pfam pdb file
 
-	structures = structure_filtered_dca_parse_pfam_pdb_file()
-
+	structures = structure_filtered_dca_parse_pfam_pdb_file() #HJ: "structures" is a dictionary with the protein families as the keys, with corresponding individual values including PDB ID, chain, PDB residue start, PDB residue end.
+    
 
 
 	# get structures for this family
@@ -126,7 +126,7 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
 
 	# construct structure strings to search the alignment file
 
-	structure_strings = [pdb_id + ' ' + chain_id for (pdb_id, chain_id, start, end) in family_structures] #HJ: This produces a list of the pdb_ids and chain_id (seperated by space) for every key associated with the chosen protein family.
+	structure_strings = [pdb_id + ' ' + chain_id for (pdb_id, chain_id, start, end) in family_structures] #HJ: This produces a list of the pdb_ids and chain_id (seperated by space) for every value associated with the chosen protein family.
 
 
 
@@ -148,16 +148,16 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
 
 	# read the full sequence alignment
 
-	family_sequences = structure_filtered_dca_read_sto(os.path.join(pfam_msa_directory, "%s_full.txt" % pfam_id))
+	family_sequences = structure_filtered_dca_read_sto(os.path.join(pfam_msa_directory, "%s_full.txt" % pfam_id)); #HJ: This function reads the MSA of the protein family.
 
 
 
 	# find the sequence identifiers that correspond to the structures
 
-	structure_sequence_dict = structure_filtered_dca_find_sequence_identifiers_for_structures(pfam_id, structure_strings, pfam_msa_directory=pfam_msa_directory);print(structure_sequence_dict) #HJ: This function searches through the full alignment and finds the proteins with identified PDB structures.
+	structure_sequence_dict = structure_filtered_dca_find_sequence_identifiers_for_structures(pfam_id, structure_strings, pfam_msa_directory=pfam_msa_directory);print(structure_sequence_dict) #HJ: This function searches through the full alignment and finds the proteins with identified PDB structures. It produces a dictionary with the key being the protein name, and the PDB ID and chain being the corresponding values.
 
-#
-#
+
+
 	# find the sequence with a structure that has the most aligned residues
 
 	structure_filtered_dca_find_most_aligned_structure(family_sequences, structure_sequence_dict, start_and_end_dict)
@@ -1058,3 +1058,5 @@ class structure_filtered_dca_pfam_is_in_structure_selection(Select):
 			accept = False
 
 		return accept
+    
+structure_filtered_dca_from_pdb_and_pfam_family("PF05400")
