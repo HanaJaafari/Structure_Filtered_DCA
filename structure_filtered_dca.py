@@ -202,9 +202,9 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
 
     # calculate DCA parameters using the resulting filtered msa and while only allowing nonzero couplings where the pair of residues in the pdb are in contact
 
-    structure_filtered_dca_compute_dca_parameters_sparse(pfam_id, pairwise_distances)
+    #structure_filtered_dca_compute_dca_parameters_sparse(pfam_id, pairwise_distances)
 
-    #structure_filtered_dca_compute_dca_parameters(pfam_id, pairwise_distances)
+    structure_filtered_dca_compute_dca_parameters(pfam_id, pairwise_distances)
 
 
 
@@ -340,7 +340,7 @@ def structure_filtered_dca_compare_norms_to_contact_map(pfam_id, pairwise_distan
 
 
 def structure_filtered_dca_compute_dca_parameters(pfam_id, pairwise_distances, processed_alignments_directory=os.path.join(".", "processed_alignments"), structure_filtering=True, contact_threshold=9.5, couplings_regularization_parameter=0.050, model_directory=os.path.join(".", "models"), max_iter=200):
-
+    #HJ: We use tensorflow version 1.14-other versions cause errors.
     import tensorflow as tf
 
     from sys import exit
