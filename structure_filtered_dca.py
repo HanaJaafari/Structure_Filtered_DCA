@@ -35,7 +35,6 @@ def structure_filtered_dca_find_sequence_identifiers_for_structures(pfam_id, str
 
 
 def structure_filtered_dca_find_most_aligned_structure(family_sequences, structure_sequence_dict, start_and_end_dict, pdb_directory=os.path.join(".", "pdbs")):
-
 	aligned_residues = []
 
 	max_aligned_residues = 0
@@ -47,7 +46,6 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 			num_aligned_residues = np.sum([1 if x.isupper() else 0 for x in str(sequence.seq)])
 
 			aligned_residues.append((sequence.id, num_aligned_residues, structure_sequence_dict[sequence.id]))
-
 
 
 	sorted_aligned_residues = sorted(aligned_residues, key=lambda x: x[1], reverse=True) #HJ: This orders the list based on the number of aligned residues
@@ -180,47 +178,43 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
 
 	# find the sequence with a structure that has the most aligned residues
 
-	structure_filtered_dca_find_most_aligned_structure(family_sequences, structure_sequence_dict, start_and_end_dict)
-#
-#
-#
-#	# download pdb
-#
+	most_aligned_sequence, most_aligned_structure, pdb_id, chain_id, start, end = structure_filtered_dca_find_most_aligned_structure(family_sequences, structure_sequence_dict, start_and_end_dict)
+
+	# download pdb
+
 	structure_filtered_dca_download_pdb(pdb_id, pdb_directory=pdb_directory)
-#
-#
-#
-#	# truncate pdb
-#
+
+
+
+	# truncate pdb
+
 	structure_filtered_dca_truncate_pdb(pdb_id, chain_id, int(start), int(end))
-#
-#
-#
-#	# # extract matrix of pairwise distances between all pairs of residues
-#
-#	# # extract sequence from pdb
-#
-#	pairwise_distances, sequence = structure_filtered_dca_get_pairwise_distances_and_sequence(pdb_id, chain_id, start, end, pdb_directory=pdb_directory)
-#
-#
-#
+
+	# # extract matrix of pairwise distances between all pairs of residues
+
+	# # extract sequence from pdb
+
+	pairwise_distances, sequence = structure_filtered_dca_get_pairwise_distances_and_sequence(pdb_id, chain_id, start, end, pdb_directory=pdb_directory)
+
+
+
 #	# filter msa based on extracted and aligned sequence (only include columns where query sequence is not a gap)
-#
-#	structure_filtered_dca_process_alignment(pfam_id, most_aligned_sequence)
-#
-#
-#
-#	# calculate DCA parameters using the resulting filtered msa and while only allowing nonzero couplings where the pair of residues in the pdb are in contact
-#
-#	structure_filtered_dca_compute_dca_parameters_sparse(pfam_id, pairwise_distances)
-#
-#	#structure_filtered_dca_compute_dca_parameters(pfam_id, pairwise_distances)
-#
-#
-#
-#	# compare highest coupling norms to contact map
-#
-#	structure_filtered_dca_compare_norms_to_contact_map(pfam_id, pairwise_distances)
+
+	structure_filtered_dca_process_alignment(pfam_id, most_aligned_sequence)
+
+
+
+	# calculate DCA parameters using the resulting filtered msa and while only allowing nonzero ouplings where the pair of residues in the pdb are in contact
+
+	structure_filtered_dca_compute_dca_parameters_sparse(pfam_id, pairwise_distances)
+
+	#structure_filtered_dca_compute_dca_parameters(pfam_id, pairwise_distances)
+
+
+
+	# compare highest coupling norms to contact map
+
+	structure_filtered_dca_compare_norms_to_contact_map(pfam_id, pairwise_distances)
 
 
 
@@ -352,6 +346,7 @@ def structure_filtered_dca_compare_norms_to_contact_map(pfam_id, pairwise_distan
 def structure_filtered_dca_compute_dca_parameters(pfam_id, pairwise_distances, processed_alignments_directory=os.path.join(".", "processed_alignments"), structure_filtering=True, contact_threshold=9.5, couplings_regularization_parameter=0.050, model_directory=os.path.join(".", "models"), max_iter=200):
 
 	import tensorflow as tf
+	tf.compat.v1.disable_eager_execution()
 
 	from sys import exit
 
@@ -511,6 +506,7 @@ def structure_filtered_dca_compute_dca_parameters(pfam_id, pairwise_distances, p
 def structure_filtered_dca_compute_dca_parameters_sparse(pfam_id, pairwise_distances, processed_alignments_directory=os.path.join(".", "processed_alignments"), structure_filtering=True, contact_threshold=9.5, couplings_regularization_parameter=0.050, model_directory=os.path.join(".", "models"), max_iter=200):
 
 	import tensorflow as tf
+	tf.compat.v1.disable_eager_execution()
 
 	from sys import exit
 
