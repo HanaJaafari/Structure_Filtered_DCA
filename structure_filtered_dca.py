@@ -76,7 +76,7 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 
         num_residues = len([residue for residue in structure.get_residues() if not structure_filtered_dca_is_hetero(residue)]); print(sequence_end-sequence_start+1); print(num_residues)
         #HJ: The below loop was added to find the MSA protein with the most aligned sequence to its PDB structure, in the case of a set of MSA protein entries without any perfect alignment.
-        alignment_difference=num_residues-(sequence_end-sequence_start+1)
+        alignment_difference=abs(num_residues-(sequence_end-sequence_start+1))
         if i==0:
             most_aligned_sequence = sequence
             most_aligned_structure = aligned_structure
