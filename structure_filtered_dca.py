@@ -321,8 +321,8 @@ def structure_filtered_dca_compute_dca_parameters_sparse(pfam_id, pairwise_dista
                         else:
                             mask_indices.append([K*i+k,K*j+l])
     
-    J_mask = tf.constant(tf.SparseTensor(indices=mask_indices, values=[0]*len(mask_indices), dense_shape=[num_node, num_node]))
-    half_J = tf.Variable(tf.SparseTensor(indices=contact_indices, values=[0]*len(contact_indices), dense_shape=[num_node, num_node]))
+    J_mask = tf.sparse.to_dense(tf.sparse.reorder(tf.SparseTensor(indices=mask_indices, values=[0.]*len(mask_indices), dense_shape=[num_node, num_node])))
+    half_J = tf.sparse.to_dense(tf.sparse.reorder(tf.SparseTensor(indices=contact_indices, values=[0.]*len(contact_indices), dense_shape=[num_node, num_node])))
     h = tf.Variable(tf.zeros([num_node]))
     J = half_J + tf.transpose(a=half_J)
 
