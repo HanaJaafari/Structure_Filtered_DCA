@@ -52,7 +52,7 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
 
     sorted_aligned_residues = sorted(aligned_residues, key=lambda x: x[1], reverse=True) #HJ: This orders the list based on the number of aligned residues
 
-    print(sorted_aligned_residues)
+    print("The sorted aligned residues are: ");print(sorted_aligned_residues)
     i=0
     for sequence, num_aligned_residues, structure_id in sorted_aligned_residues:
         
@@ -75,21 +75,20 @@ def structure_filtered_dca_find_most_aligned_structure(family_sequences, structu
         structure = structure_filtered_dca_parse_pdb(pdb_id+chain_id+'_'+str(start)+'-'+str(end)) #HJ: This generates a pdb of the aligned sequence by truncating the pdb file based on sequence's identified chain.
 
         num_residues = len([residue for residue in structure.get_residues() if not structure_filtered_dca_is_hetero(residue)]); print(sequence_end-sequence_start+1); print(num_residues)
-
-        print(num_residues,sequence_end-sequence_start+1)
-        
+        #HJ: The below loop was added to find the MSA protein with the most aligned sequence to its PDB structure, in the case of a set of MSA protein entries without any perfect alignment.
+        alignment_difference=abs(num_residues-(sequence_end-sequence_start+1))
         if i==0:
             most_aligned_sequence = sequence
-            most_aligned_residues=num_residues
             most_aligned_structure = aligned_structure
+            smallest_alignment_difference=alignment_difference
         elif num_residues > sequence_end-sequence_start+1:
             continue
             print ('Number of residues larger than sequence length')
             raise TypeError
-        elif num_residues>most_aligned_residues:
+        elif alignment_difference<smallest_alignment_difference:
             most_aligned_sequence = sequence
-            most_aligned_residues=num_residues
             most_aligned_structure = aligned_structure
+            smallest_alignment_difference=alignment_difference
         
         if num_residues == sequence_end-sequence_start+1: #HJ: if the number of residues in the truncated pdb structure is greater than the number of aligned sequenes.
 
@@ -193,7 +192,6 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
     # # extract sequence from pdb
 
     pairwise_distances, sequence = structure_filtered_dca_get_pairwise_distances_and_sequence(pdb_id, chain_id, start, end, pdb_directory=pdb_directory)
-
 
 
     # filter msa based on extracted and aligned sequence (only include columns where query sequence is not a gap)
