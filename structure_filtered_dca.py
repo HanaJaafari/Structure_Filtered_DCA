@@ -192,7 +192,7 @@ def structure_filtered_dca_from_pdb_and_pfam_family(pfam_id, pfam_msa_directory=
     # # extract sequence from pdb
 
     pairwise_distances, sequence = structure_filtered_dca_get_pairwise_distances_and_sequence(pdb_id, chain_id, start, end, pdb_directory=pdb_directory)
-
+    print(pairwise_distances); print(sequence)
 
     # filter msa based on extracted and aligned sequence (only include columns where query sequence is not a gap)
 
